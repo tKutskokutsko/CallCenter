@@ -23,17 +23,26 @@ public class AgentInfoManagementService : IAgentInfoManagementService
     {
         var agentInfo = await GetAgentInfo(model.AgentId);
 
-        if (agentInfo != null)
+        if (agentInfo is not null)
         {
             switch (model.Action)
             {
                 case "START_DO_NOT_DISTURB" when IsLunchTime(model.TimestampUtc):
-                    agentInfo.SetQueueIds(model.GueueIds);
-                    agentInfo.SetAgentState("ON_LUNCH");
+                    await _unitOfWork.Commit(async () =>
+                    {
+                        agentInfo.SetQueueIds(model.GueueIds);
+                        agentInfo.SetAgentState("ON_LUNCH");
+                    });
+
                     return new AgentStateResponseModel("ON_LUNCH");
+
                 case "CALL_STARTED":
-                    agentInfo.SetQueueIds(model.GueueIds);
-                    agentInfo.SetAgentState("ON_CALL");
+                    await _unitOfWork.Commit(async () =>
+                    {
+                        agentInfo.SetQueueIds(model.GueueIds);
+                        agentInfo.SetAgentState("ON_CALL");
+                    });
+
                     return new AgentStateResponseModel("ON_CALL");
             }
 

@@ -7,34 +7,13 @@ namespace CallCenterApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+public class CallCenterController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
-    private readonly ILogger<WeatherForecastController> _logger;
     private readonly IAgentInfoManagementService _agentInfoManagementService;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IAgentInfoManagementService agentInfoManagementService)
+    public CallCenterController(IAgentInfoManagementService agentInfoManagementService)
     {
-        _logger = logger;
         _agentInfoManagementService = agentInfoManagementService;
-    }
-
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<AgentInfoModel> Get()
-    {
-        return Enumerable.Range(1, 5).Select(index => new AgentInfoModel()
-        {
-            TimestampUtc = DateTime.Now.AddDays(index),
-            Action = Random.Shared.Next(-20, 55).ToString(),
-            AgentId = Guid.NewGuid(),
-            GueueIds = new[] { Guid.NewGuid() } ,
-            AgentName = Random.Shared.Next(-20, 55).ToString()
-        })
-        .ToArray();
     }
 
     /// <summary>
