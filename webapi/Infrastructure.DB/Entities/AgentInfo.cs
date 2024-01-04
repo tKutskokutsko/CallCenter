@@ -4,7 +4,7 @@ namespace CallCenterApi.Infrastructure.DB.Entities;
 
 public class AgentInfo
 {
-    private AgentInfo(Guid agentId, string agentName, DateTime timestampUtc, string action, Guid[] queueIds, string agentState)
+    private AgentInfo(Guid agentId, string agentName, DateTime timestampUtc, string action, Guid[]? queueIds, string agentState)
         : this()
     {
         AgentId = agentId;
@@ -25,14 +25,14 @@ public class AgentInfo
     public DateTime TimestampUtc { get; set; }
     public string Action { get; set; }
     public string AgentState { get; set; }
-    public Guid[] QueueIds { get; set; }
+    public Guid[]? QueueIds { get; set; }
 
-    public static AgentInfo Create(Guid agentId, string agentName, DateTime timestampUtc, string action, Guid[] queueIds, string agentState)
+    public static AgentInfo Create(Guid agentId, string agentName, DateTime timestampUtc, string action, Guid[]? queueIds, string agentState)
     {
         return new AgentInfo(agentId, agentName, timestampUtc, action, queueIds, agentState);
     }
 
-    public void SetQueueIds(Guid[] queueIds)
+    public void SetQueueIds(Guid[]? queueIds)
     {
         QueueIds = queueIds;
     }

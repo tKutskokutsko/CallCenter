@@ -2,7 +2,7 @@
 
 namespace CallCenterApi.Infrastructure.DB.Repositories;
 
-internal class UnitOfWork : IUnitOfWork
+internal sealed class UnitOfWork : IUnitOfWork
 {
     private readonly DataContext _dbContext;
     private readonly ILogger<UnitOfWork> _logger;

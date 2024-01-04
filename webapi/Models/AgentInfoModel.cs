@@ -6,5 +6,5 @@ public class AgentInfoModel
     public string AgentName { get; set; }
     public DateTime TimestampUtc { get; set; }
     public string Action { get; set; }
-    public Guid[] GueueIds { get; set; }
+    public Guid[]? QueueIds { get; set; }
 }

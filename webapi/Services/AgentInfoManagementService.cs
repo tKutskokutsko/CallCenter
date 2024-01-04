@@ -18,8 +18,7 @@ public class AgentInfoManagementService : IAgentInfoManagementService
         _unitOfWork = unitOfWork;
     }
 
-
-    public async Task<AgentStateResponseModel> CheckAgentState(AgentInfoModel model)
+    public async Task<AgentStateResponseModel?> CheckAgentState(AgentInfoModel model)
     {
         var agentInfo = await GetAgentInfo(model.AgentId);
 
@@ -28,18 +27,18 @@ public class AgentInfoManagementService : IAgentInfoManagementService
             switch (model.Action)
             {
                 case "START_DO_NOT_DISTURB" when IsLunchTime(model.TimestampUtc):
-                    await _unitOfWork.Commit(async () =>
+                    await _unitOfWork.Commit(() =>
                     {
-                        agentInfo.SetQueueIds(model.GueueIds);
+                        agentInfo.SetQueueIds(model.QueueIds);
                         agentInfo.SetAgentState("ON_LUNCH");
                     });
 
                     return new AgentStateResponseModel("ON_LUNCH");
 
                 case "CALL_STARTED":
-                    await _unitOfWork.Commit(async () =>
+                    await _unitOfWork.Commit(() =>
                     {
-                        agentInfo.SetQueueIds(model.GueueIds);
+                        agentInfo.SetQueueIds(model.QueueIds);
                         agentInfo.SetAgentState("ON_CALL");
                     });
 
@@ -48,7 +47,7 @@ public class AgentInfoManagementService : IAgentInfoManagementService
 
             if (IsLateEvent(model.TimestampUtc))
             {
-                throw new LateEventException("Event is late");
+                throw new LateEventException();
             }
         }
         else
@@ -60,21 +59,17 @@ public class AgentInfoManagementService : IAgentInfoManagementService
         return null;
     }
 
-    private async Task<AgentInfo> GetAgentInfo(Guid agentId)
+    private async Task<AgentInfo?> GetAgentInfo(Guid agentId)
     {
-        AgentInfo agentInfo = null;
-
-        await _unitOfWork.Commit(async () =>
-        {
-            agentInfo = await _agentInfoRepository.Get(agentId);
-        });
+        var agentInfo = await _agentInfoRepository.Get(agentId);
 
         return agentInfo;
     }
 
     private async Task CreateAgentUser(AgentInfoModel model)
     {
-        var agent = AgentInfo.Create(model.AgentId, model.AgentName, model.TimestampUtc, model.Action, model.GueueIds, "new");
+        var agent = AgentInfo.Create(model.AgentId, model.AgentName, model.TimestampUtc, model.Action, model.QueueIds, "new");
+
         await _unitOfWork.Commit(async () => { await _agentInfoRepository.Create(agent); });
     }
 
